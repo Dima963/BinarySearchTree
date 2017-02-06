@@ -33,6 +33,87 @@ public class Main {
         }
     }
 
+    public boolean remove(int key){
+
+        Node focusNode = root;
+        Node parent  =  root;
+
+        boolean isItALeftChild = true;
+        while (focusNode.Key != key){
+            parent = focusNode;
+            if(key< focusNode.Key){
+                isItALeftChild = true;
+                focusNode =  focusNode.leftChild;
+            }else {
+                isItALeftChild = false;
+                focusNode =  focusNode.rightChild;
+            }
+
+            if(focusNode == null)
+                return  false;
+
+        }
+
+        if(focusNode.leftChild == null && focusNode.rightChild ==null){
+            if(focusNode == root){
+                root = null;
+            }else if (isItALeftChild){
+                parent.leftChild = null;
+            }else {
+                parent.rightChild = null;
+            }
+        }else if(focusNode.rightChild == null){
+            if(focusNode == root){
+                root = focusNode.leftChild;
+            }else if(isItALeftChild){
+                parent.leftChild = focusNode.leftChild;
+            }else{
+                parent.rightChild = focusNode.leftChild;
+            }
+        }else if(focusNode.leftChild == null){
+            if(focusNode == root){
+                root = focusNode.rightChild;
+            }else if(isItALeftChild){
+                parent.leftChild = focusNode.rightChild;
+            }else{
+                parent.rightChild = focusNode.leftChild;
+
+            }
+        }else{
+            Node replace = getReplacementNode(focusNode);
+            if(focusNode == root){
+                root = replace;
+            }else if(isItALeftChild){
+                parent.leftChild = replace;
+            }else{
+                parent.rightChild =  replace;
+            }
+            replace.leftChild =  focusNode.leftChild;
+
+        }
+
+        return true;
+
+    }
+
+    private Node getReplacementNode(Node replaceNode){
+        Node replaceParent = replaceNode;
+        Node replacement = replaceNode;
+        Node focusNode = replaceNode.rightChild;
+
+        while (focusNode != null){
+            replaceParent = replacement;
+            replacement = focusNode;
+            focusNode = focusNode.leftChild;
+        }
+
+        if(replacement != replaceNode.rightChild){
+            replaceParent.rightChild = replacement.rightChild;
+            replacement.rightChild = replaceNode.rightChild;
+        }
+        return  replacement;
+    }
+
     public void inOrderTraverseTree(Node focusNode){
 
         if(focusNode != null){
@@ -74,8 +155,15 @@ public class Main {
         tree.addNode(75, "r");
         tree.addNode(80, "s");
 
+        System.out.println("Remove key 25");
+        tree.remove(25);
+
         tree.inOrderTraverseTree(tree.root);
+        
+        System.out.println("Find 30");
         System.out.println(tree.findNode(30));
+
+
 
     }
 }
